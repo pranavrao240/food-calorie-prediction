@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NutriCal AI — Intelligent Food Calorie & Nutrition Estimation System</title>
+  <meta name="description" content="AI/ML-Powered Food Calorie Prediction, NLP Meal Parsing, and Unsupervised Nutritional Clustering Platform">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+  <!-- Chart.js for visualizations -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <!-- Ambient background glow effects -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+
+  <div class="app-container">
+    <!-- Header Section -->
+    <header class="app-header">
+      <div class="brand-row">
+        <div class="brand-badge">AIML NUTRITION ENGINE</div>
+        <div class="model-badge"><span class="pulse-dot"></span> ML Regression (R² &gt; 0.99)</div>
+      </div>
+      <h1 class="brand-title">NutriCal <span>AI</span></h1>
+      <p class="brand-subtitle">Intelligent Food Calorie Prediction &bull; Natural Language Meal Parsing &bull; Unsupervised Nutritional Clustering</p>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs" id="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('tab-nlp')">
+        <span class="tab-icon">🥗</span>
+        <span>NLP Meal Logger</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab('tab-quick')">
+        <span class="tab-icon">⚡</span>
+        <span>Food Item Predictor</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab('tab-custom')">
+        <span class="tab-icon">🔬</span>
+        <span>Custom Macro Lab</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab('tab-analytics')">
+        <span class="tab-icon">📊</span>
+        <span>ML Metrics &amp; Clusters</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab('tab-history')">
+        <span class="tab-icon">📖</span>
+        <span>Meal Diary &amp; Logs</span>
+      </button>
+    </nav>
+
+    <!-- Tab 1: NLP Smart Meal Logger -->
+    <section id="tab-nlp" class="tab-content active">
+      <div class="panel-grid">
+        <!-- Left: Input Form -->
+        <div class="glass-card main-input-card">
+          <div class="card-header">
+            <h3><span class="icon">🥗</span> Natural Language Meal Parser</h3>
+            <p class="hint">Type or paste what you ate. Our NLP parser detects quantities, units, preparation styles, and computes accurate calories.</p>
+          </div>
+
+          <div class="sample-pills">
+            <span class="sample-label">Try sample meals:</span>
+            <button class="pill-btn" onclick="fillMealSample('2 boiled eggs, 100g oatmeal and 1 banana')">🍳 Healthy Breakfast</button>
+            <button class="pill-btn" onclick="fillMealSample('150g grilled chicken breast, 1 cup of white rice and 1 cup steamed broccoli')">🍗 Gym Meal</button>
+            <button class="pill-btn" onclick="fillMealSample('1 cheeseburger, 1 order of french fries and 1 can of cola')">🍔 Cheat Day</button>
+            <button class="pill-btn" onclick="fillMealSample('2 slices whole wheat bread with 2 tbsp peanut butter and 1 glass milk')">🥜 PB Toast</button>
+          </div>
+
+          <div class="input-group">
+            <textarea id="meal-nlp-input" rows="4" placeholder="e.g. 2 boiled eggs, 150g grilled chicken breast, 1 cup white rice and 1 avocado..."></textarea>
+          </div>
+
+          <div class="action-row">
+            <button id="btn-parse-meal" class="primary-btn" onclick="parseMeal()">
+              <span class="btn-text">Analyze &amp; Estimate Calories</span>
+              <span class="btn-spinner hidden"></span>
+            </button>
+            <button class="ghost-btn" onclick="document.getElementById('meal-nlp-input').value = ''">Clear</button>
+          </div>
+
+          <div id="nlp-status-msg" class="status-msg"></div>
+        </div>
+
+        <!-- Right: Results & Nutrition Breakdown -->
+        <div class="glass-card results-card" id="nlp-results-container">
+          <div class="empty-state" id="nlp-empty-state">
+            <div class="empty-icon">🍽️</div>
+            <h4>No Meal Analyzed Yet</h4>
+            <p>Enter your meal description on the left and click <b>Analyze</b> to see itemized caloric and macronutrient distribution.</p>
+          </div>
+
+          <div id="nlp-results-content" class="hidden">
+            <div class="calorie-summary-header">
+              <div class="total-cal-box">
+                <span class="cal-number" id="nlp-total-calories">0</span>
+                <span class="cal-unit">Total kcal</span>
+              </div>
+              <div class="meal-meta">
+                <div class="meta-item"><span class="meta-title">Items:</span> <b id="nlp-item-count">0</b></div>
+                <div class="meta-item"><span class="meta-title">Accuracy:</span> <span class="badge-accent">USDA Aligned</span></div>
+              </div>
+            </div>
+
+            <!-- Macros Bar -->
+            <div class="macros-stat-grid">
+              <div class="macro-card protein-card">
+                <div class="macro-label">Protein</div>
+                <div class="macro-value" id="nlp-macro-p">0g</div>
+              </div>
+              <div class="macro-card carbs-card">
+                <div class="macro-label">Carbohydrates</div>
+                <div class="macro-value" id="nlp-macro-c">0g</div>
+              </div>
+              <div class="macro-card fat-card">
+                <div class="macro-label">Total Fat</div>
+                <div class="macro-value" id="nlp-macro-f">0g</div>
+              </div>
+              <div class="macro-card fiber-card">
+                <div class="macro-label">Fiber</div>
+                <div class="macro-value" id="nlp-macro-fib">0g</div>
+              </div>
+            </div>
+
+            <!-- Macro Doughnut Chart Container -->
+            <div class="chart-wrapper">
+              <canvas id="nlpMacroChart" width="220" height="220"></canvas>
+            </div>
+
+            <!-- Itemized Table -->
+            <h4 class="section-title">Itemized Ingredient Breakdown</h4>
+            <div class="items-list" id="nlp-items-list"></div>
+
+            <!-- Save To Diary Action -->
+            <div class="save-diary-action">
+              <input type="text" id="diary-meal-name" placeholder="Meal Name (e.g. Post-Workout Lunch)" value="Healthy Lunch">
+              <button class="secondary-btn" onclick="saveCurrentMealToDiary()">
+                <span>💾 Save to Daily Diary</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 2: Quick Food Item Predictor -->
+    <section id="tab-quick" class="tab-content">
+      <div class="panel-grid">
+        <!-- Input parameters -->
+        <div class="glass-card">
+          <div class="card-header">
+            <h3><span class="icon">⚡</span> Single Food Calorie Predictor</h3>
+            <p class="hint">Select an item from our database or search. Adjust portion size and cooking method to see ML calorie predictions.</p>
+          </div>
+
+          <div class="input-group">
+            <label for="food-search-input">Search Food Item</label>
+            <input type="text" id="food-search-input" placeholder="Type food name (e.g. Salmon, Avocado, Brown Rice)..." oninput="handleFoodSearch(this.value)">
+            <div id="food-suggestions" class="suggestions-dropdown hidden"></div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="input-group">
+              <label for="food-category-select">Food Category</label>
+              <select id="food-category-select" onchange="updateSelectedCategory()">
+                <option value="Meat">Meat &amp; Poultry</option>
+                <option value="Seafood">Seafood &amp; Fish</option>
+                <option value="Grains">Grains &amp; Cereals</option>
+                <option value="Vegetables">Vegetables &amp; Greens</option>
+                <option value="Fruits">Fruits &amp; Berries</option>
+                <option value="Dairy &amp; Eggs">Dairy &amp; Eggs</option>
+                <option value="Nuts &amp; Legumes">Nuts &amp; Legumes</option>
+                <option value="Prepared">Prepared &amp; Fast Foods</option>
+                <option value="Snacks">Snacks &amp; Sweets</option>
+                <option value="Beverages">Beverages</option>
+              </select>
+            </div>
+
+            <div class="input-group">
+              <label for="cooking-method-select">Cooking Method</label>
+              <select id="cooking-method-select" onchange="runQuickPrediction()">
+                <option value="raw">Raw / Fresh</option>
+                <option value="boiled">Boiled</option>
+                <option value="steamed">Steamed</option>
+                <option value="grilled">Grilled</option>
+                <option value="baked">Baked</option>
+                <option value="fried">Fried (Pan-fried)</option>
+                <option value="deep_fried">Deep Fried</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Portion Size Slider -->
+          <div class="input-group">
+            <div class="slider-header">
+              <label for="portion-weight-slider">Portion Weight (grams)</label>
+              <span class="slider-val" id="portion-weight-val">150g</span>
+            </div>
+            <input type="range" id="portion-weight-slider" min="10" max="600" step="5" value="150" oninput="updatePortionWeight(this.value)">
+            <div class="slider-ticks">
+              <span>50g</span>
+              <span>150g (Standard)</span>
+              <span>300g</span>
+              <span>600g</span>
+            </div>
+          </div>
+
+          <div class="action-row">
+            <button class="primary-btn" onclick="runQuickPrediction()">Calculate Calories</button>
+          </div>
+        </div>
+
+        <!-- Prediction Result Display -->
+        <div class="glass-card" id="quick-result-card">
+          <div class="card-header">
+            <h3><span class="icon">🎯</span> Prediction &amp; Nutritional Profile</h3>
+            <p class="hint">Real-time ML regression compared against physiological Atwater energy factors.</p>
+          </div>
+
+          <div class="gauge-container">
+            <div class="gauge-display">
+              <span class="gauge-val" id="quick-cal-pred">--</span>
+              <span class="gauge-lbl">Kilocalories (kcal)</span>
+            </div>
+            <div class="comparison-pills">
+              <div class="comp-pill">
+                <span class="pill-title">ML Regressor</span>
+                <span class="pill-val" id="quick-ml-val">--</span>
+              </div>
+              <div class="comp-pill">
+                <span class="pill-title">Atwater Factor</span>
+                <span class="pill-val" id="quick-atwater-val">--</span>
+              </div>
+              <div class="comp-pill">
+                <span class="pill-title">Deviation</span>
+                <span class="pill-val" id="quick-diff-val">--</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Macro details -->
+          <div class="macros-stat-grid mt-2">
+            <div class="macro-card protein-card">
+              <div class="macro-label">Protein</div>
+              <div class="macro-value" id="quick-macro-p">--</div>
+            </div>
+            <div class="macro-card carbs-card">
+              <div class="macro-label">Carbs</div>
+              <div class="macro-value" id="quick-macro-c">--</div>
+            </div>
+            <div class="macro-card fat-card">
+              <div class="macro-label">Fat</div>
+              <div class="macro-value" id="quick-macro-f">--</div>
+            </div>
+            <div class="macro-card fiber-card">
+              <div class="macro-label">Fiber</div>
+              <div class="macro-value" id="quick-macro-fib">--</div>
+            </div>
+          </div>
+
+          <div class="chart-wrapper">
+            <canvas id="quickMacroChart" width="220" height="220"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 3: Custom Macro Lab -->
+    <section id="tab-custom" class="tab-content">
+      <div class="panel-grid">
+        <div class="glass-card">
+          <div class="card-header">
+            <h3><span class="icon">🔬</span> Macronutrient Parameter Laboratory</h3>
+            <p class="hint">Directly calibrate macronutrient values, moisture percentage, and food categories to test the Machine Learning model's inference behavior.</p>
+          </div>
+
+          <div class="macro-sliders">
+            <!-- Protein -->
+            <div class="input-group">
+              <div class="slider-header">
+                <label>Protein (grams)</label>
+                <span class="slider-val" id="custom-p-val">25g</span>
+              </div>
+              <input type="range" id="custom-p-slider" min="0" max="100" step="0.5" value="25" oninput="updateCustomSliders()">
+            </div>
+
+            <!-- Carbs -->
+            <div class="input-group">
+              <div class="slider-header">
+                <label>Total Carbohydrates (grams)</label>
+                <span class="slider-val" id="custom-c-val">30g</span>
+              </div>
+              <input type="range" id="custom-c-slider" min="0" max="150" step="0.5" value="30" oninput="updateCustomSliders()">
+            </div>
+
+            <!-- Fat -->
+            <div class="input-group">
+              <div class="slider-header">
+                <label>Total Fat (grams)</label>
+                <span class="slider-val" id="custom-f-val">10g</span>
+              </div>
+              <input type="range" id="custom-f-slider" min="0" max="100" step="0.5" value="10" oninput="updateCustomSliders()">
+            </div>
+
+            <!-- Fiber -->
+            <div class="input-group">
+              <div class="slider-header">
+                <label>Dietary Fiber (grams)</label>
+                <span class="slider-val" id="custom-fib-val">4g</span>
+              </div>
+              <input type="range" id="custom-fib-slider" min="0" max="40" step="0.5" value="4" oninput="updateCustomSliders()">
+            </div>
+
+            <!-- Water / Moisture -->
+            <div class="input-group">
+              <div class="slider-header">
+                <label>Moisture Content (%)</label>
+                <span class="slider-val" id="custom-w-val">65%</span>
+              </div>
+              <input type="range" id="custom-w-slider" min="1" max="98" step="1" value="65" oninput="updateCustomSliders()">
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card">
+          <div class="card-header">
+            <h3><span class="icon">📐</span> Energy Balance &amp; Physics Validation</h3>
+            <p class="hint">Real-time model regression evaluation under thermodynamic constraints.</p>
+          </div>
+
+          <div class="gauge-container">
+            <div class="gauge-display">
+              <span class="gauge-val" id="custom-cal-pred">310.0</span>
+              <span class="gauge-lbl">Predicted Calories</span>
+            </div>
+            <div class="comparison-pills">
+              <div class="comp-pill">
+                <span class="pill-title">Formula $4P+4(C-Fib)+9F$</span>
+                <span class="pill-val" id="custom-atwater-pred">302.0</span>
+              </div>
+              <div class="comp-pill">
+                <span class="pill-title">Caloric Density</span>
+                <span class="pill-val" id="custom-cal-density">1.8 kcal/g</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart-wrapper">
+            <canvas id="customMacroChart" width="220" height="220"></canvas>
+          </div>
+
+          <div class="info-alert">
+            <b>Thermodynamic Note:</b> Fat delivers ~9.0 kcal/g, while Protein and Digestible Carbohydrates deliver ~4.0 kcal/g. Soluble dietary fiber yields ~2.0 kcal/g via colonic fermentation into short-chain fatty acids (SCFAs). The ML model learns non-linear food-matrix absorption offsets.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 4: ML Metrics & Unsupervised Clustering -->
+    <section id="tab-analytics" class="tab-content">
+      <!-- Performance Metrics Cards -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-lbl">Ridge Regressor R²</div>
+          <div class="metric-val text-emerald" id="metric-ridge-r2">0.9999</div>
+          <div class="metric-sub">Mean Abs Error: 3.61 kcal</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-lbl">Gradient Boosting R²</div>
+          <div class="metric-val text-cyan" id="metric-gb-r2">0.9968</div>
+          <div class="metric-sub">Mean Abs Error: 10.30 kcal</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-lbl">Random Forest R²</div>
+          <div class="metric-val text-amber" id="metric-rf-r2">0.9946</div>
+          <div class="metric-sub">Mean Abs Error: 11.89 kcal</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-lbl">Dataset Samples</div>
+          <div class="metric-val text-purple" id="metric-samples">6,370</div>
+          <div class="metric-sub">USDA Standard Food Items</div>
+        </div>
+      </div>
+
+      <div class="panel-grid mt-2">
+        <!-- Feature Importance Chart -->
+        <div class="glass-card">
+          <div class="card-header">
+            <h3><span class="icon">🏆</span> Feature Importance Ranking</h3>
+            <p class="hint">Relative contribution of macronutrients and preparation methods in determining caloric output.</p>
+          </div>
+          <div class="chart-wrapper-large">
+            <canvas id="featureImportanceChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Unsupervised Clustering Summary -->
+        <div class="glass-card">
+          <div class="card-header">
+            <h3><span class="icon">🔮</span> Unsupervised K-Means Archetypes</h3>
+            <p class="hint">Unsupervised clustering of 91 foods by nutrient density profiles without human labeling.</p>
+          </div>
+          <div class="cluster-cards-list" id="cluster-summaries-list"></div>
+        </div>
+      </div>
+
+      <!-- PCA 2D Scatter Plot -->
+      <div class="glass-card mt-2">
+        <div class="card-header">
+          <h3><span class="icon">🗺️</span> Nutritional Space Projection (PCA 2D Cluster Map)</h3>
+          <p class="hint">Principal Component Analysis (PCA) maps multidimensional macronutrient profiles into a 2D plane.</p>
+        </div>
+        <div class="chart-wrapper-pca">
+          <canvas id="pcaClusterChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 5: Meal Diary & Logs -->
+    <section id="tab-history" class="tab-content">
+      <div class="glass-card">
+        <div class="card-header flex-between">
+          <div>
+            <h3><span class="icon">📖</span> Meal Diary &amp; Caloric History</h3>
+            <p class="hint">Logged meals recorded in SQLite database with timestamps and macro breakdowns.</p>
+          </div>
+          <button class="secondary-btn" onclick="loadMealHistory()">🔄 Refresh History</button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Meal Name</th>
+                <th>Items Logged</th>
+                <th>Calories</th>
+                <th>Protein</th>
+                <th>Carbs</th>
+                <th>Fat</th>
+              </tr>
+            </thead>
+            <tbody id="history-table-body">
+              <tr>
+                <td colspan="7" class="text-center">Loading meal records...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>NutriCal AI &bull; Food Calorie &amp; Nutrition Prediction System &bull; Final Year Academic AIML Implementation</p>
+      <div class="footer-links">
+        <span>Flask 3.1 &bull; Scikit-Learn 1.5 &bull; SQLite3 &bull; Chart.js</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+{
+  "best_model": "RidgeRegression",
+  "metrics": {
+    "RandomForest": {
+      "r2": 0.9946,
+      "mae": 11.89,
+      "rmse": 47.75
+    },
+    "GradientBoosting": {
+      "r2": 0.9968,
+      "mae": 10.3,
+      "rmse": 36.79
+    },
+    "RidgeRegression": {
+      "r2": 0.9999,
+      "mae": 3.61,
+      "rmse": 6.81
+    }
+  },
+  "feature_importances": {
+    "fat_g": 0.5828,
+    "carbs_g": 0.2362,
+    "protein_g": 0.1309,
+    "fiber_g": 0.0241,
+    "cooking_method_deep_fried": 0.0045,
+    "cooking_method_boiled": 0.0026,
+    "category_Nuts & Legumes": 0.0021,
+    "cooking_method_fried": 0.0021,
+    "cooking_method_steamed": 0.002,
+    "category_Dairy & Eggs": 0.0017
+  },
+  "sample_count": 6370,
+  "categories": [
+    "Beverages",
+    "Dairy & Eggs",
+    "Fruits",
+    "Grains",
+    "Meat",
+    "Nuts & Legumes",
+    "Prepared",
+    "Seafood",
+    "Snacks",
+    "Vegetables"
+  ],
+  "cooking_methods": [
+    "raw",
+    "boiled",
+    "steamed",
+    "grilled",
+    "baked",
+    "fried",
+    "deep_fried"
+  ],
+  "numeric_features": [
+    "serving_weight_g",
+    "protein_g",
+    "carbs_g",
+    "fat_g",
+    "fiber_g",
+    "sugar_g",
+    "water_pct"
+  ],
+  "target": "calories"
+}
